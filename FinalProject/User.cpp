@@ -5,7 +5,7 @@
 using namespace std;
 
 static int selectCallback(void *ptr, int count, char **data, char **columns);
-vector<User> Select(string sql);
+vector<User> Select(string sql, vector<User> &users);
 
 User::User(void)
 {
@@ -23,6 +23,7 @@ User::User(string u, string p, string r)
 {
 	username = u;
 	password = p;
+	hashed_password = p;
 	role = r;
 }
 
@@ -30,11 +31,11 @@ User::~User(void)
 {
 }
 
-User User::Find(int id)
+User User::Find(int id, User &user)
 {
-	string sql = "SELECT * from Users WHERE user_id=" + to_string(id) + ";";
-	vector<User> users = Select(sql);
-	User user;
+	string sql = "SELECT * from Users WHERE id=" + to_string(id) + ";";
+	vector<User> users;
+	Select(sql, users);
 	if(users.size() == 0)
 	{
 		return user;
@@ -42,20 +43,70 @@ User User::Find(int id)
 	user = User(users[0].GetId(), users[0].GetUsername(), users[0].GetHashedPassword(), users[0].GetRole());
 	return user;
 };
-std::vector<User> User::All()
+std::vector<User> User::All(std::vector<User> &users)
 {
 	string sql = "SELECT * from Users;";
-	return Select(sql);
+	Select(sql, users);
+	return users;
 };
 void User::Create()
 {
+	int rc;
+	char *error;
+	sqlite3 *db;
+	rc = sqlite3_open("FinalProject.db", &db);
+	string sql = "INSERT INTO Users (username, hashed_password, role) VALUES('" + username + "', '" + hashed_password + "', '" + role + "');";
+	const char *sqlInsert = sql.c_str();
+	rc = sqlite3_exec(db, sqlInsert, NULL, NULL, &error);
+   if( rc != SQLITE_OK ) {
+		fprintf(stderr, "SQL error: %s\n", error);
+		sqlite3_free(error);
+		sqlite3_close(db);
+	} else {
+		fprintf(stdout, "User created successfully\n");
+		sqlite3_close(db);
+		string sql = "SELECT * from Users WHERE username='" + username + "';";
+		vector<User> users;
+		Select(sql, users);
+		id = users[0].id;
+	}
 };
 void User::Update()
 {
+	int rc;
+	char *error;
+	sqlite3 *db;
+	rc = sqlite3_open("FinalProject.db", &db);
+	string sql = "UPDATE Users SET username='" + username +  "', hashed_password='" + hashed_password +  "', role='" + role +  "';";
+	const char *sqlUpdate = sql.c_str();
+	rc = sqlite3_exec(db, sqlUpdate, NULL, NULL, &error);
+   if( rc != SQLITE_OK ) {
+		fprintf(stderr, "SQL error: %s\n", error);
+		sqlite3_free(error);
+		sqlite3_close(db);
+	} else {
+		fprintf(stdout, "User updated successfully\n");
+		sqlite3_close(db);
+	}
 };
 void User::Delete()
 {
-};	
+	int rc;
+	char *error;
+	sqlite3 *db;
+	rc = sqlite3_open("FinalProject.db", &db);
+	string sql = "DELETE FROM Users WHERE id=" + to_string(id) + ";";
+	const char *sqlUpdate = sql.c_str();
+	rc = sqlite3_exec(db, sqlUpdate, NULL, NULL, &error);
+   if( rc != SQLITE_OK ) {
+		fprintf(stderr, "SQL error: %s\n", error);
+		sqlite3_free(error);
+		sqlite3_close(db);
+	} else {
+		fprintf(stdout, "User updated successfully\n");
+		sqlite3_close(db);
+	}
+};
 
 int User::GetId()
 {
@@ -71,6 +122,7 @@ string User::GetHashedPassword()
 }
 void User::SetPassword(string p)
 {
+	password = p;
 };
 std::string User::GetRole()
 {
@@ -78,6 +130,7 @@ std::string User::GetRole()
 };
 void User::SetRole(string r)
 {
+	role = r;
 };
 bool User::Authenticate()
 {
@@ -85,7 +138,7 @@ bool User::Authenticate()
 };
 
 static int selectCallback(void *ptr, int count, char **data, char **columns){
-	if(count == 0) 
+	if(count == 0)
 	{
 		return 0;
 	}
@@ -95,7 +148,6 @@ static int selectCallback(void *ptr, int count, char **data, char **columns){
 	string username, hashed_password, role;
 	int id;
 	for(int i = 0; i<count; i++){
-		cout << columns[i] << endl;
 		string colName(columns[i]);
 
 		if(colName == "username")
@@ -108,7 +160,7 @@ static int selectCallback(void *ptr, int count, char **data, char **columns){
 			role = data[i];
 		} else if(colName == "id")
 		{
-			id = (int)data[i];
+			id = atoi(data[i]);
 		}
 	}
 
@@ -117,14 +169,15 @@ static int selectCallback(void *ptr, int count, char **data, char **columns){
 	return 0;
 }
 
-vector<User> Select(string sql)
+vector<User> Select(string sql, vector<User> &users)
 {
+	cout << sql << endl;
 	sqlite3 *db;
 	char *zErrMsg = 0;
 	int rc;
 	const char* data = "Callback function called";
 	User user;
-	std::vector<User> users;
+
 
 	/* Open database */
 	rc = sqlite3_open("FinalProject.db", &db);

@@ -18,8 +18,8 @@ public:
 	User(int i, std::string u, std::string h, std::string r);
 	User(std::string u, std::string p, std::string r);
 	~User(void);
-	static User Find(int id);
-	static std::vector<User> All();
+	static User Find(int id, User &user);
+	static std::vector<User> All(std::vector<User> &users);
 	void Create();
 	void Update();
 	void Delete();	

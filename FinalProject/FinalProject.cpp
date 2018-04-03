@@ -4,7 +4,7 @@
 #include "sqlite3.h"
 #include <string>
 #include "User.h"
- 
+
 using namespace std;
 
 int initDB();
@@ -14,12 +14,18 @@ int _tmain(int argc, _TCHAR* argv[])
    int result;
    result = initDB();
 
-   vector<User> users = User::All();
-   cout << users[0].GetId() << endl;
- 
+   User user("username", "password", "user");
+   user.Create();
+   User read_user; 
+   User::Find(user.GetId(), read_user);
+   cout << user.GetUsername() << endl;
+   cout << user.GetId() << endl;
+   cout << read_user.GetId() << endl;
+   cout << read_user.GetUsername() << endl;
+
    // Execute SQL
 
- 
+
    //// Display MyTable
    //cout << "Retrieving values in MyTable ..." << endl;
    //const char *sqlSelect = "SELECT * FROM MyTable;";
@@ -40,16 +46,16 @@ int _tmain(int argc, _TCHAR* argv[])
    //      {
    //         // Determine Cell Position
    //         int cellPosition = (rowCtr * columns) + colCtr;
- 
+
    //         // Display Cell Value
    //         cout.width(12);
    //         cout.setf(ios::left);
    //         cout << results[cellPosition] << " ";
    //      }
- 
+
    //      // End Line
    //      cout << endl;
- 
+
    //      // Display Separator For Header
    //      if (0 == rowCtr)
    //      {
@@ -64,24 +70,24 @@ int _tmain(int argc, _TCHAR* argv[])
    //   }
    //}
    //sqlite3_free_table(results);
- 
+
    //// Close Database
    //cout << "Closing MyDb.db ..." << endl;
    //sqlite3_close(db);
    //cout << "Closed MyDb.db" << endl << endl;
- 
+
    // Wait For User To Close Program
    cout << "Please press any key to exit the program ..." << endl;
    cin.get();
- 
+
    return 0;
 }
 
-int initDB() 
+int initDB()
 {
 	int rc;
    char *error;
- 
+
    // Open Database
    cout << "Opening FinalProject.db ..." << endl;
    sqlite3 *db;
@@ -96,7 +102,7 @@ int initDB()
    {
       cout << "Opened MyDb.db." << endl << endl;
    }
- 
+
    // Execute SQL
    cout << "Creating USERS Table ..." << endl;
    const char *sqlCreateUserTable = "CREATE TABLE IF NOT EXISTS USERS (id INTEGER PRIMARY KEY, username STRING, hashed_password STRING, role STRING);";
