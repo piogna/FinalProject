@@ -70,7 +70,7 @@ int Database::initDB()
 	}
 
 	cout << "Creating FLIGHT_USER ..." << endl;
-	const char *sqlCreateFlightUserTable = "CREATE TABLE IF NOT EXISTS FLIGHTS (id INTEGER PRIMARY KEY, seat_no STRING, user_id INTEGER, flight_id INTEGER);";
+	const char *sqlCreateFlightUserTable = "CREATE TABLE IF NOT EXISTS FLIGHT_USER (id INTEGER PRIMARY KEY, seat_no STRING, user_id INTEGER, flight_id INTEGER);";
 	rc = sqlite3_exec(db, sqlCreateFlightUserTable, NULL, NULL, &error);
 	if (rc)
 	{
