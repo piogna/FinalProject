@@ -275,3 +275,21 @@ vector<User> Select(string sql)
 		return users;
 	}
 }
+
+void User::AddFlight(int flight_id)
+{
+	int rc;
+	char *error;
+	sqlite3 *db = Database::openDb();
+	string sql = "INSERT INTO FLIGHT_USER (seat_no, user_id, flight_id) VALUES('A1', " + to_string(id) + ", " + to_string(flight_id) + ");";
+	const char *sqlUpdate = sql.c_str();
+	rc = sqlite3_exec(db, sqlUpdate, NULL, NULL, &error);
+   if( rc != SQLITE_OK ) {
+		fprintf(stderr, "SQL error: %s\n", error);
+		sqlite3_free(error);
+		Database::closeDb(db);
+	} else {
+		fprintf(stdout, "User updated successfully\n");
+		Database::closeDb(db);
+	}
+};

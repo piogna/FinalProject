@@ -299,3 +299,18 @@ void Flight::SetArrivalTime(string a)
 {
   arrival_time = a;
 };
+
+int Flight::GetTotalSeat()
+{
+	return total_seat;
+}
+
+double Flight::GetFare()
+{
+	return fare;
+}
+
+string Flight::GetPlaneModel()
+{
+	return plane_model;
+}

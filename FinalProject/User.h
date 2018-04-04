@@ -35,5 +35,6 @@ public:
 	std::string GetRole();
 	void SetRole(std::string r);
 	bool Authenticate();
+	void AddFlight(int flight_id);
 };
 

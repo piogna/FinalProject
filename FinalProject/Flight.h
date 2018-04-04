@@ -47,4 +47,7 @@ public:
 	void SetDepartTime(string d);
 	string GetArrivalTime();
 	void SetArrivalTime(string a);
+	int GetTotalSeat();
+	double GetFare();
+	string GetPlaneModel();
 };

@@ -7,7 +7,7 @@ public:
 	Database(void);
 	static sqlite3 *openDb();
 	static int initDB();
-	int insertFlight();
+	static int insertFlight();
 	void getFlights();
 	static void closeDb(sqlite3 *db);
 	~Database(void);
