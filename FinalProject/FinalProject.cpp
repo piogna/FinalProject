@@ -16,8 +16,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
    User user("username", "password", "user");
    user.Create();
-   User read_user; 
-   User::Find(user.GetId(), read_user);
+   User read_user = User::Find(user.GetId());
    cout << user.GetUsername() << endl;
    cout << user.GetId() << endl;
    cout << read_user.GetId() << endl;
@@ -131,7 +130,7 @@ int initDB()
    }
 
    cout << "Creating FLIGHT_USER ..." << endl;
-   const char *sqlCreateFlightUserTable = "CREATE TABLE IF NOT EXISTS FLIGHTS (id INTEGER PRIMARY KEY, seat_no STRING, user_id INTEGER, flight_id INTEGER);";
+   const char *sqlCreateFlightUserTable = "CREATE TABLE IF NOT EXISTS FLIGHT_USER (id INTEGER PRIMARY KEY, seat_no STRING, user_id INTEGER, flight_id INTEGER);";
    rc = sqlite3_exec(db, sqlCreateUserTable, NULL, NULL, &error);
    if (rc)
    {

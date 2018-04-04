@@ -1,9 +1,13 @@
 #pragma once
 #include "sqlite3.h"
+#include "Database.h"
+#include "User.h"
 #include <string>
 #include <vector>
 
-using std::string;
+using namespace std;
+
+class Flight;
 
 class User
 {
@@ -18,11 +22,12 @@ public:
 	User(int i, std::string u, std::string h, std::string r);
 	User(std::string u, std::string p, std::string r);
 	~User(void);
-	static User Find(int id, User &user);
-	static std::vector<User> All(std::vector<User> &users);
+	static User Find(int id);
+	static std::vector<User> All();
 	void Create();
 	void Update();
-	void Delete();	
+	void Delete();
+	vector<Flight> GetFlights();
 	int GetId();
 	string GetUsername();
 	string GetHashedPassword();
